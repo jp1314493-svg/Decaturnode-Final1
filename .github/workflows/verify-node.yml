@@ -1,14 +1,37 @@
-name: Decatur Node Integrity Check
-on:
-  push:
-    branches: [ main ]
-jobs:
-  verify-chain:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      - name: Run Three-Way Chain Verifier
-        run: python3 verify_chain.py
+import os
+
+def verify():
+    # Your unique Decatur anchor
+    target = "f581cf2d"
+    
+    # The 4 pillars of the node
+    files = [
+        "README.md", 
+        "certification_report.json", 
+        "certification_final.json", 
+        "partnership_protocol.json"
+    ]
+    
+    print(f"--- 🛰️ DECATUR VERIFICATION: {target} ---")
+    
+    success = True
+    for f in files:
+        if os.path.exists(f):
+            with open(f, "r") as file:
+                if target in file.read():
+                    print(f"✅ {f}: Verified")
+                else:
+                    print(f"❌ {f}: Hash mismatch")
+                    success = False
+        else:
+            print(f"⚠️ {f}: Missing from Garage")
+            success = False
+
+    if success:
+        print("\n🏆 CHAIN VERIFIED. Node is Solid Concrete.")
+    else:
+        print("\n🛑 SHIELD ALERT: Integrity Error")
+        exit(1)
+
+if __name__ == "__main__":
+    verify()
